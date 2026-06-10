@@ -28,6 +28,7 @@ from app.routers import (
     profile,
     reviews,
 )
+from starlette.middleware.base import BaseHTTPMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from app.limiter_setup import limiter
@@ -50,21 +51,21 @@ app = FastAPI(title="TaxBel API", version="1.0.0")
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+class CSPMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        if not request.url.path.startswith("/docs") and not request.url.path.startswith("/redoc"):
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'self'; "
+                "script-src 'self' https://www.google.com https://www.gstatic.com 'unsafe-inline'; "
+                "style-src 'self' 'unsafe-inline'; "
+                "img-src 'self' data:; "
+                "frame-src https://www.google.com;"
+            )
+        return response
+
 # CSP Middleware
-@app.middleware("http")
-async def add_csp_headers(request: Request, call_next):
-    response = await call_next(request)
-    # reCAPTCHA v2 требует unsafe-inline, при переходе на v3 можно убрать
-    response.headers["Content-Security-Policy"] = (
-        "default-src 'self'; "
-        "script-src 'self' https://www.google.com https://www.gstatic.com 'unsafe-inline'; "
-        "style-src 'self' 'unsafe-inline'; "
-        "img-src 'self' data:; "
-        "connect-src 'self'; "
-        "frame-src https://www.google.com; "
-        "font-src 'self' data:"
-    )
-    return response
+app.add_middleware(CSPMiddleware)
 
 # CORS: читаем из .env или используем дефолт для разработки
 cors_origins_str = os.getenv("CORS_ORIGINS", "http://localhost:5173")
