@@ -109,6 +109,16 @@ async def root():
     return {"message": "TaxBel API is running"}
 
 
+@app.post("/run-seed")
+async def run_seed():
+    import subprocess, sys
+    try:
+        result = subprocess.run([sys.executable, "seed.py"], capture_output=True, text=True, cwd="tax-api")
+        return {"status": "ok", "stdout": result.stdout, "stderr": result.stderr}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+
 @app.get("/health")
 async def health():
     """Health-check эндпоинт."""
