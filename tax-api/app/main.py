@@ -112,12 +112,30 @@ async def root():
 
 @app.post("/run-seed")
 async def run_seed():
-    import subprocess, sys
-    try:
-        result = subprocess.run([sys.executable, "seed.py"], capture_output=True, text=True, cwd="tax-api")
-        return {"status": "ok", "stdout": result.stdout, "stderr": result.stderr}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
+    import subprocess, sys, os
+    scripts = ["seed.py", "import_breeds.py", "import_cars_final.py"]
+    results = []
+    for script in scripts:
+        try:
+            result = subprocess.run(
+                [sys.executable, script],
+                capture_output=True,
+                text=True,
+                cwd="tax-api"
+            )
+            results.append({
+                "script": script,
+                "status": "ok",
+                "stdout": result.stdout[-200:],  # последние 200 символов, чтобы не перегружать ответ
+                "stderr": result.stderr[-200:]
+            })
+        except Exception as e:
+            results.append({
+                "script": script,
+                "status": "error",
+                "message": str(e)
+            })
+    return {"results": results}
 
 
 @app.get("/health")
