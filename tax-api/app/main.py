@@ -120,8 +120,7 @@ async def run_seed():
             result = subprocess.run(
                 [sys.executable, script],
                 capture_output=True,
-                text=True,
-                cwd="tax-api"
+                text=True
             )
             results.append({
                 "script": script,
