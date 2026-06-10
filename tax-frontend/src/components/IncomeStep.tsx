@@ -6,7 +6,7 @@ import {
   Alert, useMediaQuery, useTheme, TableContainer, Paper,
   IconButton, List, ListItem, ListItemText,
   Select, MenuItem, FormControl, InputLabel,
-  FormControlLabel, Checkbox, Tooltip, LinearProgress
+  FormControlLabel, Checkbox, LinearProgress
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts';

@@ -5,7 +5,7 @@ import {
     IconButton, Fade, LinearProgress
 } from '@mui/material';
 import {
-    ChevronLeft, ChevronRight, HelpOutlineOutlined, SaveOutlined, Refresh, FileDownloadOutlined, RestartAlt
+    ChevronLeft, ChevronRight, HelpOutlineOutlined, SaveOutlined, FileDownloadOutlined, RestartAlt
 } from '@mui/icons-material';
 import IncomeStep from './IncomeStep';
 import DeductionsStep from './DeductionsStep';
@@ -40,11 +40,10 @@ const TOTAL_STEPS = STEPS.length;
 
 const Layout: React.FC = () => {
     const { currentStep, setCurrentStep } = useTaxContext();
-    const { openAuthDialog } = useAuth();
+    void useAuth();
     const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
     const handleNext = () => setCurrentStep(Math.min(currentStep + 1, TOTAL_STEPS - 1));
     const handleBack = () => setCurrentStep(Math.max(currentStep - 1, 0));

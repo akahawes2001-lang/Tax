@@ -214,35 +214,35 @@ const LandTaxStep: React.FC = () => {
                     }}
                     data-testid="land-tax-detail"
                 >
-                    <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1 }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>
                         Детализация расчёта
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Typography variant="body2" color="text.secondary">Кадастровая стоимость</Typography>
-                            <Typography variant="body2" fontWeight={600}>{cadValue.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} руб.</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>{cadValue.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} руб.</Typography>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Typography variant="body2" color="text.secondary">Категория земли</Typography>
-                            <Typography variant="body2" fontWeight={600}>{LAND_CATEGORY_LABELS[landCategory]}</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>{LAND_CATEGORY_LABELS[landCategory]}</Typography>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Typography variant="body2" color="text.secondary">Применённая ставка</Typography>
-                            <Typography variant="body2" fontWeight={600}>{result.applied_rate}%</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>{result.applied_rate}%</Typography>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Typography variant="body2" color="text.secondary">Сумма налога до льгот</Typography>
-                            <Typography variant="body2" fontWeight={600}>{taxBeforeBenefits.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} руб.</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>{taxBeforeBenefits.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} руб.</Typography>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Typography variant="body2" color="text.secondary">Льготы</Typography>
-                            <Typography variant="body2" fontWeight={600} color={result.is_exempt ? 'success.main' : 'text.secondary'}>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }} color={result.is_exempt ? 'success.main' : 'text.secondary'}>
                                 {result.is_exempt ? 'Применены (освобождение)' : 'Не применяются'}
                             </Typography>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid', borderColor: 'divider', pt: 0.5, mt: 0.5 }}>
-                            <Typography variant="body2" fontWeight={700}>Итоговая сумма налога</Typography>
-                            <Typography variant="body2" fontWeight={700} color={result.is_exempt ? 'success.main' : 'primary.main'}>
+                            <Typography variant="body2" sx={{ fontWeight: 700 }}>Итоговая сумма налога</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 700 }} color={result.is_exempt ? 'success.main' : 'primary.main'}>
                                 {result.tax_amount.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} руб.
                             </Typography>
                         </Box>

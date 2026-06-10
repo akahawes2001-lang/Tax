@@ -12,23 +12,29 @@ import { PieChart, Pie, Cell, Tooltip, Legend, Sector } from 'recharts';
 import { useTaxContext } from '../context/TaxContext';
 import { useAuth } from '../context/AuthContext';
 import { calculateIncomeTax } from '../api';
-import type { MonthlyIncome, IncomeTaxResponse } from '../types';
+import type { MonthlyIncome, IncomeTaxResponse, TaxResult } from '../types';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import * as XLSX from 'xlsx';
 
 pdfMake.vfs = pdfFonts.vfs;
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AA46BE'];
 const CATEGORY_COLORS: Record<string, string> = { income: '#0088FE', property: '#FF8042', investment: '#00C49F', other: '#FFBB28' };
 const CATEGORY_LABELS: Record<string, string> = { income: 'Доходы', property: 'Имущество', investment: 'Инвестиции', other: 'Прочие' };
 
 const INIT_MONTH: MonthlyIncome = { month: 1, year: 2025, salary: 0, children_birthdays: [], is_union_member: false, pension_contributions: false };
 
+interface AggregatedItem {
+    name: string;
+    value: number;
+    items: TaxResult[];
+    color: string;
+}
+
 const ResultsStep: React.FC = () => {
     const { currentTaxes, saveCurrentToHistory, clearCurrentTaxes } = useTaxContext();
     const { isAuthenticated } = useAuth();
-    const [activeIndex, setActiveIndex] = useState<number | null>(null);
+    const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
     const [detailsOpen, setDetailsOpen] = useState(false);
     const lastAutoSavedKey = useRef('');
     const isSaving = useRef(false);
@@ -58,12 +64,12 @@ const ResultsStep: React.FC = () => {
     const categories = ['income', 'property', 'investment', 'other'];
     const categoryNames: Record<string, string> = { income: 'Налоги с доходов', property: 'Имущественные налоги', investment: 'Инвестиции', other: 'Прочие налоги' };
 
-    const aggregated = categories.map(cat => {
+    const aggregated: AggregatedItem[] = categories.map(cat => {
         const items = currentTaxes.filter(r => r.category === cat);
         return { name: categoryNames[cat], value: items.reduce((sum, r) => sum + r.tax, 0), items, color: CATEGORY_COLORS[cat] || '#8884d8' };
     });
 
-    const selectedAggregated = activeIndex !== null ? aggregated[activeIndex] : null;
+    const selectedAggregated = activeIndex !== undefined ? aggregated[activeIndex] : null;
 
     const totalIncome = currentTaxes.reduce((sum, r) => {
         if (r.details && typeof r.details === 'object' && 'total_income' in r.details) return sum + (r.details as any).total_income;
@@ -79,19 +85,19 @@ const ResultsStep: React.FC = () => {
             const savedProfile = localStorage.getItem('taxCalcProfile');
             if (!savedProfile) { alert('Нет данных профиля.'); return; }
             const profile = JSON.parse(savedProfile);
-            const { monthlySalary = 0, monthlyDividends = 0, monthlyForeign = 0, monthlyPersonal = 0, insuranceExpenses = 0, needsHousing = false, housingExpenses = 0, professionalCategory = '', childrenBirthdays = [], isSingleParent = false, isLargeFamily = false, disabilityDeduction = false, youngSpecialistDeduction = false, disabledChildrenBirthdays = [], educationExpenses = 0, educationStartMonth = null, educationEndMonth = null, medicalExpenses = 0, medicineExpenses = 0, alimonyPaid = 0, charityAmount = 0 } = profile;
+            const { monthlySalary = 0, monthlyDividends = 0, monthlyForeign = 0, monthlyPersonal = 0, insuranceExpenses = 0, needsHousing = false, housingExpenses = 0, professionalCategory = '', childrenBirthdays = [], isSingleParent = false, isLargeFamily = false, disabilityDeduction = false, youngSpecialistDeduction = false, disabledChildrenBirthdays = [], educationExpenses = 0, educationStartMonth = null, educationEndMonth = null, medicalExpenses = 0, medicineExpenses = 0 } = profile;
             const buildPayload = (year: number, applyDeductions: boolean): MonthlyIncome[] => {
                 const base: MonthlyIncome = {
                     ...INIT_MONTH, year, salary: monthlySalary, dividends: monthlyDividends, foreign_income: monthlyForeign, personal_income: monthlyPersonal,
                     insurance_expenses: applyDeductions ? insuranceExpenses : 0, needs_housing_improvement: applyDeductions ? needsHousing : false,
                     housing_expenses: applyDeductions ? housingExpenses : 0, children_birthdays: applyDeductions ? childrenBirthdays : [],
-                    is_single_parent: applyDeductions ? isSingleParent : false, is_large_family: applyDeductions ? isLargeFamily : false,
+                    is_large_family: applyDeductions ? isLargeFamily : false,
                     disability_deduction: applyDeductions ? disabilityDeduction : false, young_specialist_deduction: applyDeductions ? youngSpecialistDeduction : false,
                     disabled_children_birthdays: applyDeductions ? disabledChildrenBirthdays : [], education_expenses: applyDeductions ? educationExpenses : 0,
                     education_start_month: applyDeductions ? educationStartMonth : null, education_end_month: applyDeductions ? educationEndMonth : null,
                     medical_expenses: applyDeductions ? medicalExpenses : 0, medicine_expenses: applyDeductions ? medicineExpenses : 0,
                     professional_deduction_category: applyDeductions ? (professionalCategory || null) : null,
-                };
+                } as MonthlyIncome;
                 return Array.from({ length: 12 }, (_, i) => ({ ...base, month: i + 1 }));
             };
             const [res1, res2] = await Promise.all([
@@ -126,6 +132,11 @@ const ResultsStep: React.FC = () => {
         XLSX.writeFile(wb, 'налоговый-отчёт.xlsx');
     };
 
+    const renderActiveShape = (props: any) => {
+        const { outerRadius, ...rest } = props;
+        return <Sector {...rest} outerRadius={outerRadius + 10} />;
+    };
+
     return (
         <Box>
             <Typography variant="h6">Сводный отчёт</Typography>
@@ -144,7 +155,7 @@ const ResultsStep: React.FC = () => {
 
                     {/* Детализация по налогам - вертикальный список вместо таблицы */}
                     <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
-                        {currentTaxes.map((r, i) => (
+                        {currentTaxes.map((r: TaxResult, i: number) => (
                             <Paper key={i} sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderLeft: `4px solid ${CATEGORY_COLORS[r.category] || '#8884d8'}`, borderRadius: 2 }}>
                                 <Box>
                                     <Typography variant="body1" sx={{ fontWeight: 600 }}>{r.name}</Typography>
@@ -166,19 +177,19 @@ const ResultsStep: React.FC = () => {
                     <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center', mt: 2, gap: 3 }}>
                         <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', width: '100%', overflow: 'hidden' }}>
                             <PieChart width={300} height={300}>
-                                <Pie activeIndex={activeIndex !== null ? activeIndex : undefined} activeShape={(props: unknown) => { const s = props as { outerRadius: number }; return <Sector {...s} outerRadius={s.outerRadius + 10} />; }}
+                                <Pie activeShape={renderActiveShape}
                                     data={aggregated} cx="50%" cy="50%" innerRadius={60} outerRadius={100} fill="#8884d8" dataKey="value"
-                                    onClick={(_data, index) => setActiveIndex(prev => (prev === index ? null : index))} label>
+                                    onClick={(_data: any, index: number) => setActiveIndex(prev => (prev === index ? undefined : index))} label>
                                     {aggregated.map((entry, index) => (<Cell key={`cell-${index}`} fill={entry.color} />))}
                                 </Pie>
                                 <Tooltip /><Legend />
                             </PieChart>
                         </Box>
-                        {selectedAggregated && (
+                        {selectedAggregated && selectedAggregated.items && (
                             <Paper sx={{ flex: 1, p: 2, width: '100%' }}>
                                 <Typography variant="subtitle1" gutterBottom>{selectedAggregated.name}</Typography>
                                 <Typography variant="h5" color="primary" gutterBottom>{selectedAggregated.value.toFixed(2)} руб.</Typography>
-                                {selectedAggregated.items.map((item, i) => (
+                                {selectedAggregated.items.map((item: TaxResult, i: number) => (
                                     <Box key={i} sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
                                         <Typography variant="body2">{item.name}</Typography>
                                         <Typography variant="body2" sx={{ fontWeight: 'bold' }}>{item.tax.toFixed(2)} руб.</Typography>
@@ -240,7 +251,7 @@ const ResultsStep: React.FC = () => {
                     <Dialog open={detailsOpen} onClose={() => setDetailsOpen(false)} maxWidth="md" fullWidth slotProps={{ paper: { sx: { mx: { xs: 1, sm: 2 }, width: { xs: 'calc(100% - 16px)', sm: 'auto' } } } }}>
                         <DialogTitle>Детализация расчётов</DialogTitle>
                         <DialogContent>
-                            {currentTaxes.map((taxItem, idx) => (
+                            {currentTaxes.map((taxItem: TaxResult, idx: number) => (
                                 <Accordion key={idx}>
                                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography sx={{ fontWeight: 700 }}>{taxItem.name}</Typography>

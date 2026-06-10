@@ -38,8 +38,7 @@ const Logo: React.FC<LogoProps> = ({ variant = 'small', color }) => {
             {/* Текстовая часть */}
             <Typography
                 variant={textVariant}
-                fontWeight="bold"
-                sx={{ letterSpacing: 1, display: 'inline' }}
+                sx={{ fontWeight: 'bold', letterSpacing: 1, display: 'inline' }}
             >
                 <Box component="span" sx={{ color: 'text.primary' }}>
                     Tax

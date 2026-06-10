@@ -55,10 +55,10 @@ const FeedbackPage: React.FC = () => {
                         borderColor: 'divider',
                     }}
                 >
-                    <Typography variant="h5" fontWeight={700} mb={1} textAlign="center">
+                    <Typography variant="h5" sx={{ fontWeight: 700, mb: 1, textAlign: 'center' }}>
                         Обратная связь
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" mb={3} textAlign="center">
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3, textAlign: 'center' }}>
                         Напишите ваш отзыв или сообщите об ошибке. Отзывы публикуются после проверки.
                     </Typography>
 
@@ -76,7 +76,7 @@ const FeedbackPage: React.FC = () => {
                     <form onSubmit={handleSubmit}>
                         <Stack spacing={2}>
                             <Box>
-                                <Typography variant="body2" color="text.secondary" mb={1}>
+                                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                                     Ваша оценка
                                 </Typography>
                                 <Rating

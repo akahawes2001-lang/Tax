@@ -198,7 +198,7 @@ const PetsStep: React.FC = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <PetsIcon sx={{ color: isDangerous ? '#f44336' : '#4caf50' }} />
                     <Box>
-                        <Typography variant="body1" fontWeight="bold">
+                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
                             {dog.breed}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
@@ -278,30 +278,15 @@ const PetsStep: React.FC = () => {
                         onChange={(_, newValue) => setSelectedBreed(newValue)}
                         loading={breedLoading}
                         noOptionsText="Ничего не найдено"
-                        renderInput={(params) => {
-                            const { InputProps } = params;
-                            return (
-                                <TextField
-                                    {...params}
-                                    label="Порода"
-                                    size="small"
-                                    fullWidth={isMobile}
-                                    helperText="Начните вводить название"
-                                    InputProps={{
-                                        ...(InputProps || {}),
-                                        endAdornment: (
-                                            <>
-                                                {breedLoading ? <CircularProgress size={20} /> : null}
-                                                {InputProps?.endAdornment}
-                                                <Tooltip title="Введите название породы. Система автоматически определит, относится ли она к опасным. Если порода не найдена — считается неопасной (14 руб./квартал). Пример: «Немецкая овчарка» — опасная, ставка 67 руб./квартал." arrow>
-                                                    <Typography component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', cursor: 'help', ml: 0.5 }}>?</Typography>
-                                                </Tooltip>
-                                            </>
-                                        ),
-                                    }}
-                                />
-                            );
-                        }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Порода"
+                                size="small"
+                                fullWidth={isMobile}
+                                helperText="Начните вводить название"
+                            />
+                        )}
                         sx={{ minWidth: 200, flex: 1 }}
                     />
                 </Box>
@@ -313,12 +298,14 @@ const PetsStep: React.FC = () => {
                     size="small"
                     sx={{ width: isMobile ? '100%' : 100 }}
                     helperText="Собак одной породы"
-                    InputProps={{
-                        endAdornment: (
-                            <Tooltip title="Сколько у вас собак этой породы. Пример: две немецкие овчарки — укажите 2." arrow>
-                                <Typography component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', cursor: 'help' }}>?</Typography>
-                            </Tooltip>
-                        ),
+                    slotProps={{
+                        input: {
+                            endAdornment: (
+                                <Tooltip title="Сколько у вас собак этой породы. Пример: две немецкие овчарки — укажите 2." arrow>
+                                    <Typography component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', cursor: 'help' }}>?</Typography>
+                                </Tooltip>
+                            ),
+                        },
                     }}
                 />
                 <TextField
@@ -329,12 +316,14 @@ const PetsStep: React.FC = () => {
                     size="small"
                     sx={{ width: isMobile ? '100%' : 100 }}
                     helperText="1–4"
-                    InputProps={{
-                        endAdornment: (
-                            <Tooltip title="Сколько кварталов вы владеете собакой в течение года. Если весь год — 4 квартала. Пример: завели собаку в апреле — налог за 3 квартала." arrow>
-                                <Typography component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', cursor: 'help' }}>?</Typography>
-                            </Tooltip>
-                        ),
+                    slotProps={{
+                        input: {
+                            endAdornment: (
+                                <Tooltip title="Сколько кварталов вы владеете собакой в течение года. Если весь год — 4 квартала. Пример: завели собаку в апреле — налог за 3 квартала." arrow>
+                                    <Typography component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', cursor: 'help' }}>?</Typography>
+                                </Tooltip>
+                            ),
+                        },
                     }}
                 />
                 <Button variant="outlined" onClick={addDog} fullWidth={isMobile}>
@@ -347,7 +336,7 @@ const PetsStep: React.FC = () => {
                     {dangerousDogs.length > 0 && (
                         <Box>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                                <Typography variant="subtitle2" fontWeight="bold" color="error">
+                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }} color="error">
                                     Опасные породы
                                 </Typography>
                                 <Chip label={`${dangerousDogs.length} шт.`} size="small" sx={{ bgcolor: '#ffebee', fontWeight: 'medium' }} />
@@ -364,7 +353,7 @@ const PetsStep: React.FC = () => {
                     {safeDogs.length > 0 && (
                         <Box>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                                <Typography variant="subtitle2" fontWeight="bold" color="success.main">
+                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }} color="success.main">
                                     Неопасные породы
                                 </Typography>
                                 <Chip label={`${safeDogs.length} шт.`} size="small" sx={{ bgcolor: '#e8f5e9', fontWeight: 'medium' }} />

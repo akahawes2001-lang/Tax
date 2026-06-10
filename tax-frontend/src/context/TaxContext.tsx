@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import type { TaxResult, DepositItem, DepositTaxResponse } from '../types';
-import { saveHistory, calculateDepositTax as apiCalculateDepositTax } from '../api';
+import { saveHistory } from '../api';
 import { useAuth } from './AuthContext';
 
 interface TaxContextType {

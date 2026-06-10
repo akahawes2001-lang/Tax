@@ -1,8 +1,8 @@
 // src/components/DepositStep.tsx
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import {
-    Box, Typography, TextField, Button, Alert, useMediaQuery, useTheme, Tooltip,
-    LinearProgress, Paper, IconButton, Select, MenuItem, FormControl, InputLabel, Card, CardContent
+    Box, Typography, TextField, Button, Alert, useMediaQuery, useTheme,
+    Paper, IconButton, Select, MenuItem, FormControl, InputLabel, Card, CardContent
 } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
@@ -10,11 +10,11 @@ import { calculateDepositTax } from '../api';
 import { useTaxContext } from '../context/TaxContext';
 import { useDebounce } from '../hooks/useDebounce';
 import type { DepositItem } from '../types';
+// DepositItem is used via deposits from context, keep import for type
 
 const DepositStep: React.FC = () => {
     const { deposits, addDeposit, removeDeposit, updateDeposit, setDepositResult, depositResult, depositAnnualIncome, setDepositAnnualIncome, updateCurrentTax } = useTaxContext();
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -49,11 +49,6 @@ const DepositStep: React.FC = () => {
             <TextField label="Ваш годовой доход (руб.)" type="number" value={depositAnnualIncome} onChange={e => setDepositAnnualIncome(Number(e.target.value))} fullWidth sx={{ mb: 2, mt: 2 }} helperText="Для прогрессивной ставки (если > 350 000 руб., ставка 25%)" />
 
             {deposits.map((dep, index) => {
-                const termMonths = dep.term_days / 30.44;
-                const exemptionMonths = getExemptionMonths(dep.currency);
-                const isExempt = termMonths >= exemptionMonths;
-                const progressValue = Math.min((termMonths / exemptionMonths) * 100, 100);
-
                 return (
                     <Card key={index} sx={{ mb: 2, border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
                         <CardContent>

@@ -119,7 +119,7 @@ const highlights = [
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  void useAuth();
   const theme = useTheme();
   const [reviews, setReviews] = useState<any[]>([]);
 

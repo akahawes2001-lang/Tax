@@ -1,7 +1,7 @@
 // src/components/DeductionsStep.tsx
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import {
-    Box, Typography, TextField, Button, Alert, useMediaQuery, useTheme,
+    Box, Typography, TextField, Alert, useMediaQuery, useTheme,
     FormControlLabel, Checkbox, Tooltip, RadioGroup, Radio, FormControl, FormLabel,
     LinearProgress, Paper
 } from '@mui/material';
@@ -163,14 +163,7 @@ const DeductionsStep: React.FC = () => {
                     onChange={e => setState(prev => ({ ...prev, voluntaryInsurance: Number(e.target.value) }))}
                     helperText="Сумма ежемесячного взноса"
                     fullWidth
-                    inputProps={{ 'data-testid': 'voluntary-insurance-input' }}
-                    InputProps={{
-                        endAdornment: (
-                            <Tooltip title="Взносы по договору добровольного страхования жизни. Эта сумма удерживается из зарплаты. Пример: вы заключили договор на 100 руб./мес. — укажите 100." arrow>
-                                <Typography component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', cursor: 'help' }}>?</Typography>
-                            </Tooltip>
-                        ),
-                    }}
+                    slotProps={{ htmlInput: { 'data-testid': 'voluntary-insurance-input' } }}
                 />
 
                 {/* Медицинское страхование */}
@@ -181,14 +174,7 @@ const DeductionsStep: React.FC = () => {
                     onChange={e => setState(prev => ({ ...prev, medicalInsurance: Number(e.target.value) }))}
                     helperText="Сумма ежемесячного взноса"
                     fullWidth
-                    inputProps={{ 'data-testid': 'medical-insurance-input' }}
-                    InputProps={{
-                        endAdornment: (
-                            <Tooltip title="Взносы по договору добровольного медицинского страхования (ДМС). Удерживается из зарплаты. Пример: полис ДМС стоит 80 руб./мес. — укажите 80." arrow>
-                                <Typography component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', cursor: 'help' }}>?</Typography>
-                            </Tooltip>
-                        ),
-                    }}
+                    slotProps={{ htmlInput: { 'data-testid': 'medical-insurance-input' } }}
                 />
 
                 <Typography variant="subtitle2" sx={{ mt: 2 }}>Исполнительные листы</Typography>
@@ -201,14 +187,7 @@ const DeductionsStep: React.FC = () => {
                     onChange={e => setState(prev => ({ ...prev, alimonyAmount: Number(e.target.value) }))}
                     helperText="Фиксированная сумма"
                     fullWidth
-                    inputProps={{ 'data-testid': 'alimony-input' }}
-                    InputProps={{
-                        endAdornment: (
-                            <Tooltip title="Сумма алиментов, удерживаемая по исполнительному листу. Максимальный размер удержания — 50% от чистой зарплаты. Пример: по решению суда вы платите 300 руб./мес. — укажите 300." arrow>
-                                <Typography component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', cursor: 'help' }}>?</Typography>
-                            </Tooltip>
-                        ),
-                    }}
+                    slotProps={{ htmlInput: { 'data-testid': 'alimony-input' } }}
                 />
 
                 {/* Прочие удержания */}
@@ -219,14 +198,7 @@ const DeductionsStep: React.FC = () => {
                     onChange={e => setState(prev => ({ ...prev, otherWrits: Number(e.target.value) }))}
                     helperText="Сумма прочих удержаний"
                     fullWidth
-                    inputProps={{ 'data-testid': 'other-writs-input' }}
-                    InputProps={{
-                        endAdornment: (
-                            <Tooltip title="Общая сумма прочих удержаний по исполнительным листам (штрафы, кредиты). Максимальный размер — 20% от чистой зарплаты. Пример: у вас два кредита по 150 руб. — укажите 300." arrow>
-                                <Typography component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', cursor: 'help' }}>?</Typography>
-                            </Tooltip>
-                        ),
-                    }}
+                    slotProps={{ htmlInput: { 'data-testid': 'other-writs-input' } }}
                 />
 
                 <Typography variant="subtitle2" sx={{ mt: 2 }}>Социальные вычеты</Typography>
@@ -239,14 +211,7 @@ const DeductionsStep: React.FC = () => {
                     onChange={e => setState(prev => ({ ...prev, charityAmount: Number(e.target.value) }))}
                     helperText="Вычет не более 50% от суммы налога"
                     fullWidth
-                    inputProps={{ 'data-testid': 'charity-input' }}
-                    InputProps={{
-                        endAdornment: (
-                            <Tooltip title="Сумма пожертвований на благотворительность. Социальный вычет предоставляется в пределах 50% от суммы подоходного налога (совместно с другими социальными вычетами). Пример: вы пожертвовали 200 руб./мес. — укажите 200." arrow>
-                                <Typography component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', cursor: 'help' }}>?</Typography>
-                            </Tooltip>
-                        ),
-                    }}
+                    slotProps={{ htmlInput: { 'data-testid': 'charity-input' } }}
                 />
 
                 {/* Индикатор предельных удержаний */}
@@ -265,7 +230,7 @@ const DeductionsStep: React.FC = () => {
                                 value={Math.min(((state.alimonyAmount + state.otherWrits) / netSalary) * 100, 100)}
                                 sx={{ height: 10, borderRadius: 5 }}
                             />
-                            <Typography variant="caption" display="block" sx={{ mt: 0.5 }}>
+                            <Typography variant="caption" sx={{ display: 'block', mt: 0.5 }}>
                                 {state.alimonyAmount + state.otherWrits > netSalary * 0.5
                                     ? '⚠️ Внимание: удержания превышают 50% чистого дохода!'
                                     : 'Уровень удержаний в пределах нормы.'}

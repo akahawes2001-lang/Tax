@@ -1,18 +1,16 @@
 // src/components/AdminPage.tsx
 import React, { useEffect, useState } from 'react';
 import {
-    Box, Container, Typography, Paper, Button, Chip, CircularProgress,
+    Box, Container, Typography, Paper, Button, Chip,
     Alert, Grid, Rating, IconButton, Divider, Skeleton, Snackbar,
     useTheme, Card, CardContent
 } from '@mui/material';
-import ShieldIcon from '@mui/icons-material/Shield';
 import StarIcon from '@mui/icons-material/Star';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RateReviewIcon from '@mui/icons-material/RateReview';
-import LoginIcon from '@mui/icons-material/Login';
 import Header from './Header';
 import Footer from './Footer';
 import { useAuth } from '../context/AuthContext';
@@ -44,7 +42,7 @@ interface RecentCalc {
 }
 
 const AdminPage: React.FC = () => {
-    const { isAuthenticated, user, logout, openAuthDialog } = useAuth();
+    const { isAuthenticated, user, logout } = useAuth();
     const navigate = useNavigate();
     const theme = useTheme();
 

@@ -11,7 +11,6 @@ import {
     Collapse,
     Card,
     CardContent,
-    CardActions,
     Skeleton,
     Snackbar,
     Divider,
@@ -297,6 +296,7 @@ const parseDetails = (details_json?: string): DetailRow[] => {
 const HistoryPage: React.FC = () => {
     const navigate = useNavigate();
     const { isAuthenticated, isAuthLoading, isAuthDialogOpen, openAuthDialog } = useAuth();
+    // openAuthDialog is used
     const theme = useTheme();
     const dialogWasOpened = useRef(false);
 

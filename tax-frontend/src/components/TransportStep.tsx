@@ -3,7 +3,7 @@ import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import {
     Box, Typography, TextField, Button, Alert, useMediaQuery, useTheme,
     Autocomplete, CircularProgress, Select, MenuItem, FormControl, InputLabel,
-    IconButton, Tooltip, Paper, Chip, Divider
+    IconButton, Paper, Chip, Divider
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -79,7 +79,6 @@ const TransportStep: React.FC = () => {
 
     const { updateCurrentTax } = useTaxContext();
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [brandOptions, setBrandOptions] = useState<string[]>([]);
     const [modelOptions, setModelOptions] = useState<string[]>([]);

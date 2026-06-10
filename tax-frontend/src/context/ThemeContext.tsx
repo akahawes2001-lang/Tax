@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useMemo, useState, useEffect, type ReactNode } from 'react';
 import { ThemeProvider as MuiThemeProvider, createTheme, CssBaseline } from '@mui/material';
 
 type ThemeMode = 'light' | 'dark';
@@ -84,13 +84,6 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                             opacity: 0.4,
                             pointerEvents: 'none',
                         },
-                    },
-                    containedPrimary: {
-                        boxShadow: '0 10px 25px rgba(20,184,166,0.4)',
-                    },
-                    outlinedPrimary: {
-                        borderColor: '#14B8A6',
-                        color: '#14B8A6',
                     },
                 },
             },

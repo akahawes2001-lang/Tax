@@ -17,14 +17,25 @@ import api from '../api';
 
 const USER_PROFILE_KEY = 'taxCalcProfile';
 
+interface ProfileData {
+  lastName: string;
+  firstName: string;
+  middleName: string;
+  unp: string;
+  avatar: string;
+  referralCode: string;
+  referrals: number;
+  email: string;
+}
+
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, logout, token } = useAuth();
+  const { isAuthenticated, logout, token, user } = useAuth();
   const theme = useTheme();
 
-  const [profile, setProfile] = useState({
+  const [profile, setProfile] = useState<ProfileData>({
     lastName: '', firstName: '', middleName: '', unp: '', avatar: '',
-    referralCode: '', referrals: 0,
+    referralCode: '', referrals: 0, email: '',
   });
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -54,6 +65,7 @@ const ProfilePage: React.FC = () => {
           avatar: data.avatar || '',
           referralCode: data.referralCode || '',
           referrals: data.referrals || 0,
+          email: data.email || '',
         }));
       }
     } catch { }
@@ -72,7 +84,7 @@ const ProfilePage: React.FC = () => {
           });
         }
       })
-      .catch(err => console.error('Stats error:', err));
+      .catch((err: Error) => console.error('Stats error:', err));
   };
 
   useEffect(() => {
@@ -92,19 +104,18 @@ const ProfilePage: React.FC = () => {
       await api.delete('/profile/delete-account');
       logout();
       navigate('/');
-    } catch (err: any) {
+    } catch {
       alert('Ошибка при удалении аккаунта');
     }
   };
 
-  // Отправка отзыва (с исправленной обработкой ошибок)
+  // Отправка отзыва
   const handleReviewSubmit = async () => {
     if (!reviewText.trim()) return;
     if (!reviewAuthorName.trim()) {
       setReviewAuthorNameError('Имя обязательно');
       return;
     }
-    // Минимальная длина 10 символов (как в схеме)
     if (reviewText.trim().length < 10) {
       setReviewError('Минимальная длина отзыва — 10 символов');
       return;
@@ -121,7 +132,6 @@ const ProfilePage: React.FC = () => {
       loadStats();
       setTimeout(() => setReviewSuccess(false), 3000);
     } catch (err: any) {
-      // Извлекаем читаемое сообщение из ответа FastAPI
       let message = 'Ошибка при отправке отзыва';
       if (err.response?.data) {
         if (Array.isArray(err.response.data.detail)) {
@@ -182,7 +192,7 @@ const ProfilePage: React.FC = () => {
       <Header />
       <Box sx={{ flex: 1 }}>
         <Container maxWidth="md" sx={{ py: 6 }}>
-          <Typography variant="h2" fontWeight={700} textAlign="center" sx={{ mb: 4 }}>
+          <Typography variant="h2" sx={{ fontWeight: 700, textAlign: 'center', mb: 4 }}>
             Профиль
           </Typography>
 
@@ -213,7 +223,7 @@ const ProfilePage: React.FC = () => {
                 justifyContent: 'center',
                 minHeight: 120,
               }}>
-                <Typography variant="h4" fontWeight={700} sx={{ color: primaryColor }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, color: primaryColor }}>
                   {item.value}
                 </Typography>
                 <Typography variant="body2" sx={{ color: textSecondary, textTransform: 'capitalize' }}>
@@ -230,7 +240,7 @@ const ProfilePage: React.FC = () => {
                 <PersonIcon sx={{ fontSize: 36 }} />
               </Avatar>
               <Box>
-                <Typography variant="h6" fontWeight={600} color="text.primary">
+                <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
                   {profile.firstName || profile.lastName ? `${profile.firstName} ${profile.lastName}` : 'Пользователь'}
                 </Typography>
                 <IconButton component="label" size="small" sx={{ color: primaryColor }}>
@@ -247,7 +257,7 @@ const ProfilePage: React.FC = () => {
               </Box>
             </Box>
 
-            <Typography variant="h6" fontWeight={600} color="text.primary" sx={{ mb: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary', mb: 2 }}>
               Личные данные
             </Typography>
 
@@ -274,7 +284,7 @@ const ProfilePage: React.FC = () => {
 
             <Box sx={{ mb: 3 }}>
               <Typography variant="body2" sx={{ color: textSecondary, mb: 0.5 }}>Email</Typography>
-              <TextField fullWidth value={profile.email || ''} onChange={e => setProfile(p => ({ ...p, email: e.target.value }))} placeholder="Введите email" sx={inputStyles} />
+              <TextField fullWidth value={profile.email || user?.email || ''} onChange={e => setProfile(p => ({ ...p, email: e.target.value }))} placeholder="Введите email" sx={inputStyles} />
             </Box>
 
             <Button
@@ -297,7 +307,7 @@ const ProfilePage: React.FC = () => {
 
           {/* Карточка отзыва */}
           <Paper sx={{ borderRadius: '16px', bgcolor: cardBg, border: '1px solid', borderColor: 'divider', color: 'white', p: 4 }}>
-            <Typography variant="h6" fontWeight={600} color="text.primary" sx={{ mb: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary', mb: 2 }}>
               Оставить отзыв
             </Typography>
 
@@ -305,7 +315,7 @@ const ProfilePage: React.FC = () => {
               <Rating
                 name="review-rating"
                 value={reviewRating}
-                onChange={(event, newValue) => {
+                onChange={(_event, newValue) => {
                   if (newValue !== null) setReviewRating(newValue);
                 }}
                 size="large"
@@ -395,7 +405,7 @@ const ProfilePage: React.FC = () => {
             </Button>
           </Box>
 
-          <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)} PaperProps={{ sx: { bgcolor: cardBg, color: 'text.primary', borderRadius: 3 } }}>
+          <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)} slotProps={{ paper: { sx: { bgcolor: cardBg, color: 'text.primary', borderRadius: 3 } } }}>
             <DialogTitle>Удалить аккаунт?</DialogTitle>
             <DialogContent>Это действие необратимо.</DialogContent>
             <DialogActions>

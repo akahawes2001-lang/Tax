@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
     Container,
     Paper,
@@ -15,7 +15,6 @@ import api from '../api';
 const VerifyEmailPage: React.FC = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const location = useLocation();
     const urlToken = searchParams.get('token');
     const [token, setToken] = useState(urlToken || '');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');

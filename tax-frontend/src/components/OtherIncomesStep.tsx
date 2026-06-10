@@ -180,7 +180,6 @@ const OtherIncomesStep: React.FC = () => {
                   {...params}
                   label="Населённый пункт"
                   helperText="Выберите город"
-                  inputProps={{ ...params.inputProps, 'data-testid': 'rental-city-input' }}
                 />
               )}
               sx={{ flex: 1 }}
@@ -204,7 +203,7 @@ const OtherIncomesStep: React.FC = () => {
               onChange={e => setMonths(Number(e.target.value))}
               fullWidth
               helperText="Сколько месяцев сдаётся"
-              inputProps={{ 'data-testid': 'rental-months-input' }}
+              slotProps={{ htmlInput: { 'data-testid': 'rental-months-input' } }}
             />
             <Tooltip title="Укажите, на сколько месяцев вы сдаёте объект. Итоговая сумма налога = месячная ставка × количество месяцев. Пример: комната в Минске на 6 месяцев — 53 × 6 = 318 руб." arrow>
               <Typography component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', cursor: 'help', ml: 0.5 }}>?</Typography>
@@ -263,7 +262,7 @@ const OtherIncomesStep: React.FC = () => {
               onChange={e => setSalePrice(Number(e.target.value))}
               fullWidth
               helperText="Сумма продажи"
-              inputProps={{ 'data-testid': 'sale-price-input' }}
+              slotProps={{ htmlInput: { 'data-testid': 'sale-price-input' } }}
             />
             <Tooltip title="Цена, по которой вы продали имущество. Налог рассчитывается с разницы между ценой продажи и расходами на приобретение (или с применением вычета 20%). Пример: продали авто за 80 000 руб." arrow>
               <Typography component="span" sx={{ color: 'text.secondary', fontWeight: 'bold', cursor: 'help', ml: 0.5 }}>?</Typography>
@@ -285,7 +284,7 @@ const OtherIncomesStep: React.FC = () => {
           </Box>
 
           <FormControlLabel
-            control={<Checkbox checked={applyDeduction} onChange={e => setApplyDeduction(e.target.checked)} inputProps={{ 'data-testid': 'sale-deduction-checkbox' } as any} />}
+            control={<Checkbox checked={applyDeduction} onChange={e => setApplyDeduction(e.target.checked)} slotProps={{ input: { 'data-testid': 'sale-deduction-checkbox' } as any }} />}
             label={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 Применить имущественный вычет
