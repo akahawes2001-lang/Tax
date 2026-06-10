@@ -32,3 +32,4 @@ qrcode
 pillow
 sentry-sdk
 loguru
+psycopg2-binary
