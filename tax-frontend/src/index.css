@@ -1,0 +1,69 @@
+/* Стили для печати */
+@media print {
+    /* Скрываем Header, Footer, навигацию */
+    header, footer, nav, .MuiStepper-root,
+    button, [role="navigation"],
+    .MuiIconButton-root, .MuiButton-root,
+    .MuiTabs-root, .MuiTab-root,
+    /* Скрываем всё, что не основной контент */
+    .MuiAppBar-root, .MuiDrawer-root,
+    #recaptcha-container {
+        display: none !important;
+    }
+
+    /* Основной контент на всю страницу */
+    body, #root, .MuiContainer-root, main,
+    .MuiPaper-root {
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+        border: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Таблицы результатов */
+    table, .MuiTable-root {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        page-break-inside: auto;
+    }
+
+    tr, .MuiTableRow-root {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+
+    td, th, .MuiTableCell-root {
+        border: 1px solid #ccc !important;
+        padding: 6px 8px !important;
+        font-size: 10pt !important;
+        color: black !important;
+    }
+
+    /* Текст */
+    p, h1, h2, h3, h4, h5, h6, span, div, label {
+        color: black !important;
+        background: transparent !important;
+    }
+
+    /* Ссылки */
+    a {
+        text-decoration: underline;
+        color: #000 !important;
+    }
+
+    /* Избегаем разрывов страниц */
+    .no-break, .MuiPaper-root, .MuiCard-root {
+        page-break-inside: avoid;
+    }
+
+    /* Шрифт */
+    body {
+        font-family: 'Times New Roman', Times, serif !important;
+        font-size: 12pt !important;
+        line-height: 1.4 !important;
+    }
+}

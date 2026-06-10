@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://taxbel.by/sitemap.xml

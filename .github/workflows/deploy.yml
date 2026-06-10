@@ -1,0 +1,68 @@
+name: TaxBel CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        working-directory: ./tax-api
+        run: pip install -r requirements.txt
+      - name: Lint Python
+        run: pip install flake8 && flake8 app/ --max-line-length=120
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: tax_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        working-directory: ./tax-api
+        run: pip install -r requirements.txt pytest pytest-asyncio httpx
+      - name: Run tests
+        working-directory: ./tax-api
+        env:
+          DATABASE_URL: postgresql+asyncpg://postgres:testpass@localhost:5432/tax_test
+        run: pytest tests/ -v --timeout=30
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        working-directory: ./tax-frontend
+        run: npm ci
+      - name: Build
+        working-directory: ./tax-frontend
+        run: npm run build

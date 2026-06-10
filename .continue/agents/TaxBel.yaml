@@ -1,0 +1,47 @@
+name: TaxBel
+version: 1.0.0
+schema: v1
+
+models:
+  - name: DeepSeek (быстрый)
+    provider: openai
+    model: deepseek-chat
+    apiBase: https://api.deepseek.com/v1
+    apiKey: sk-56214d66ac3d4bdfac9aeed8fa1919f0
+    systemMessage: >
+      Ты — senior full-stack разработчик, помогаешь с проектом TaxBel.
+      Стек: FastAPI (Python 3.11+), React 18, TypeScript, Material UI, PostgreSQL.
+      Отвечай кратко, код с комментариями на русском.
+  - name: DeepSeek (умный)
+    provider: openai
+    model: deepseek-reasoner
+    apiBase: https://api.deepseek.com/v1
+    apiKey: sk-56214d66ac3d4bdfac9aeed8fa1919f0
+    systemMessage: >
+      Ты — эксперт по налогам РБ и архитектуре ПО. Помогаешь с проектом TaxBel.
+      Рассуждай детально, предлагай оптимальные решения, учитывай Налоговый кодекс РБ.
+
+tabAutocompleteModel:
+  name: Автодополнение
+  provider: openai
+  model: deepseek-chat
+  apiBase: https://api.deepseek.com/v1
+  apiKey: sk-56214d66ac3d4bdfac9aeed8fa1919f0
+
+tabAutocompleteOptions:
+  disableInFiles:
+    - "*.env"
+    - "*.md"
+    - "*.json"
+    - "*.csv"
+    - "*.yaml"
+    - "*.yml"
+  multiline: true
+
+context:
+  - provider: codebase
+  - provider: file
+  - provider: docs
+
+ui:
+  showTokens: true
